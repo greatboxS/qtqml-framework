@@ -1,0 +1,4 @@
+#ifndef __APP_CONFIGURATION_H__
+#define __APP_CONFIGURATION_H__
+
+#endif // __APP_CONFIGURATION_H__
