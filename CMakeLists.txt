@@ -12,18 +12,25 @@ option(BUILD_DOC "Build document using doxygen" OFF)
 option(BUILD_TEST "Build test application" ON)
 option(BUILD_SHARED_LIBS "Build share library" ON)
 
-if(BUILD_DOC)
-    add_subdirectory(doc)
-endif()
-
 # Install header files
 file(GLOB INSTALL_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*)
 
 # Build header files
-file(GLOB INC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp)
+file(
+    GLOB
+    INC_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.hpp
+)
 
 # Build source files
-file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
+file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c
+     ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.c
+)
 
 find_package(
     Qt6
@@ -47,12 +54,20 @@ target_include_directories(
 )
 
 # This define flags us as a "launcher" and allows us to link against the AppMan's private libraries
-target_compile_definitions(${PROJECT_NAME} PRIVATE AM_COMPILING_LAUNCHER)
+target_compile_definitions(${PROJECT_NAME} PUBLIC AM_COMPILING_LAUNCHER)
 
 target_link_libraries(
-    ${PROJECT_NAME} PRIVATE Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::AppManLauncherPrivate
-                            Qt6::DBus
+    ${PROJECT_NAME} PUBLIC Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::AppManLauncherPrivate
+                           Qt6::DBus
 )
+
+if(BUILD_TEST)
+    add_subdirectory(test)
+endif()
+
+if(BUILD_DOC)
+    add_subdirectory(doc)
+endif()
 
 # Update version to output libraries
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})

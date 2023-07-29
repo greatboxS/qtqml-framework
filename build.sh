@@ -6,7 +6,7 @@ INSTALL_PREFIX=_install
 BUILD_VERSION="1.0.0"
 BUILD_TYPE="Debug"
 BUILD_DOC=OFF
-BUILD_TEST=OFF
+BUILD_TEST=ON
 BUILD_SHARE=ON
 BUILD_CLEAN=NO
 CLEAR_CMAKE_CACHE=NO
@@ -55,7 +55,7 @@ argument_parser() {
         ;;
 
         e)
-            BUILD_TEST=ON
+            BUILD_TEST=OFF
         ;;
 
         h)
@@ -64,8 +64,8 @@ argument_parser() {
             echo "Build type:               -b <debug/release - default: debug>"
             echo "Build static library:     -t <default build share library>"
             echo "Install prefix path:      -i <default: _install>"
-            echo "Build document:           -d"
-            echo "Build test:               -e"
+            echo "Build document enable:    -d"
+            echo "Build test disable        -e"
             echo "Build version:            -v <build version eg: 1.0.1>"
             echo "Clear cmake cache:        -c"
             exit;
@@ -86,7 +86,7 @@ echo "- CMAKE_INSTALL_PREFIX  :  $INSTALL_PREFIX"
 echo "- BUILD_VERSION         :  $BUILD_VERSION"
 echo "- BUILD_TYPE            :  $BUILD_TYPE"
 echo "- BUILD_DOC             :  $BUILD_DOC"
-echo "- BUILD_TEST            :  $BUILD_CLEAN"
+echo "- BUILD_TEST            :  $BUILD_TEST"
 echo "- BUILD_SHARED_LIBS     :  $BUILD_SHARE"
 echo "- BUILD_CLEAN           :  $BUILD_CLEAN"
 echo "- CLEAR_CMAKE_CACHE     :  $CLEAR_CMAKE_CACHE"
