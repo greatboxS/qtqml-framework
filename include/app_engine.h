@@ -1,7 +1,6 @@
 #ifndef __APP_ENGINE_H__
 #define __APP_ENGINE_H__
 
-#include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlEngine>
 
