@@ -6,7 +6,7 @@
 
 namespace hmi
 {
-    class ApplicationEngine : QObject
+    class ApplicationEngine
     {
         QQmlEngine *m_qmlEngine;
         QQmlContext *m_qmlContext;

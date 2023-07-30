@@ -4,12 +4,13 @@ namespace hmi
 {
 
     ScreenState::ScreenState(qreal x, qreal y, qreal z,
-                             qreal width, qreal height, bool opacity,
+                             qreal width, qreal height, qreal opacity,
                              bool enable, bool visible) :
         m_x(x),
         m_y(y), m_z(z),
         m_width(width), m_height(height), m_opacity(opacity),
-        m_enabled(enable), m_visible(visible) {
+        m_enabled(enable), m_visible(visible),
+        m_containerSource({NULL, NULL, NULL, NULL, NULL}) {
     }
     ScreenState::~ScreenState() {
     }
@@ -55,28 +56,34 @@ namespace hmi
         emit visibleChanged();
     }
 
-    void ScreenState::setHeaderContainer(const QString &value) {
+    void ScreenState::setHeaderContainer(QObject *value) {
         if (value == m_containerSource.header) return;
         m_containerSource.header = value;
         emit headerContainerChanged();
     }
 
-    void ScreenState::setFooterContainer(const QString &value) {
+    void ScreenState::setFooterContainer(QObject *value) {
         if (value == m_containerSource.footer) return;
         m_containerSource.footer = value;
         emit footerContainerChanged();
     }
 
-    void ScreenState::setLeftContainer(const QString &value) {
+    void ScreenState::setLeftContainer(QObject *value) {
         if (value == m_containerSource.left) return;
         m_containerSource.left = value;
         emit leftContainerChanged();
     }
 
-    void ScreenState::setRightContainer(const QString &value) {
+    void ScreenState::setRightContainer(QObject *value) {
         if (value == m_containerSource.right) return;
         m_containerSource.right = value;
         emit rightContainerChanged();
+    }
+
+    void ScreenState::setCenterContainer(QObject *value) {
+        if (value == m_containerSource.center) return;
+        m_containerSource.center = value;
+        emit centerContainerChanged();
     }
 
     qreal ScreenState::x() const { return m_x; }
@@ -87,9 +94,10 @@ namespace hmi
     qreal ScreenState::opacity() const { return m_opacity; }
     bool ScreenState::isEnabled() const { return m_enabled; }
     bool ScreenState::isVisible() const { return m_visible; }
-    QString ScreenState::getHeaderContainer() const { return m_containerSource.header; }
-    QString ScreenState::getFooterContainer() const { return m_containerSource.footer; }
-    QString ScreenState::getLeftContainer() const { return m_containerSource.left; }
-    QString ScreenState::getRightContainer() const { return m_containerSource.right; }
+    QObject *ScreenState::getHeaderContainer() { return m_containerSource.header; }
+    QObject *ScreenState::getFooterContainer() { return m_containerSource.footer; }
+    QObject *ScreenState::getLeftContainer() { return m_containerSource.left; }
+    QObject *ScreenState::getRightContainer() { return m_containerSource.right; }
+    QObject *ScreenState::getCenterContainer() { return m_containerSource.center; }
 
 } // namespace hmi

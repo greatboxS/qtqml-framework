@@ -1,11 +1,18 @@
 #ifndef __APP_VIEW_H__
 #define __APP_VIEW_H__
 
-#include "app_factory.h"
 #include <QObject>
 #include <QSize>
 #include <QPoint>
+#include <map>
+#include <unordered_map>
+#include <deque>
+#include "app_base.h"
 
+#define HMI_APP_VIEW_MODULE    "hmi.AppView"
+#define HMI_APP_VIEW_VER_MAJOR 1
+#define HMI_APP_VIEW_VER_MINOR 0
+#define HMI_APP_VIEW_OBJ       "AppView"
 namespace hmi
 {
     class ApplicationEngine;
@@ -22,10 +29,11 @@ namespace hmi
         Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
         Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
 
-        Q_PROPERTY(QString headerContainer READ getHeaderContainer WRITE setHeaderContainer NOTIFY headerContainerChanged)
-        Q_PROPERTY(QString footerContainer READ getFooterContainer WRITE setFooterContainer NOTIFY footerContainerChanged)
-        Q_PROPERTY(QString leftContainer READ getLeftContainer WRITE setLeftContainer NOTIFY leftContainerChanged)
-        Q_PROPERTY(QString rightContainer READ getRightContainer WRITE setRightContainer NOTIFY rightContainerChanged)
+        Q_PROPERTY(QObject *headerContainer READ getHeaderContainer WRITE setHeaderContainer NOTIFY headerContainerChanged)
+        Q_PROPERTY(QObject *footerContainer READ getFooterContainer WRITE setFooterContainer NOTIFY footerContainerChanged)
+        Q_PROPERTY(QObject *leftContainer READ getLeftContainer WRITE setLeftContainer NOTIFY leftContainerChanged)
+        Q_PROPERTY(QObject *rightContainer READ getRightContainer WRITE setRightContainer NOTIFY rightContainerChanged)
+        Q_PROPERTY(QObject *centerContainer READ getCenterContainer WRITE setCenterContainer NOTIFY centerContainerChanged)
 
     private:
         qreal m_x;
@@ -37,15 +45,16 @@ namespace hmi
         bool m_enabled;
         bool m_visible;
         struct ContainerSource {
-            QString header;
-            QString footer;
-            QString left;
-            QString right;
+            QObject *header;
+            QObject *footer;
+            QObject *left;
+            QObject *right;
+            QObject *center;
         } m_containerSource;
 
     public:
         explicit ScreenState(qreal x, qreal y, qreal z,
-                             qreal width, qreal height, bool opacity = 1.0,
+                             qreal width, qreal height, qreal opacity = 1.0,
                              bool enable = true, bool visible = true);
         ~ScreenState();
 
@@ -57,10 +66,11 @@ namespace hmi
         void setOpacity(qreal value);
         void setEnabled(bool value);
         void setVisible(bool value);
-        void setHeaderContainer(const QString &value);
-        void setFooterContainer(const QString &value);
-        void setLeftContainer(const QString &value);
-        void setRightContainer(const QString &value);
+        void setHeaderContainer(QObject *value);
+        void setFooterContainer(QObject *value);
+        void setLeftContainer(QObject *value);
+        void setRightContainer(QObject *value);
+        void setCenterContainer(QObject *value);
 
         qreal x() const;
         qreal y() const;
@@ -70,10 +80,11 @@ namespace hmi
         qreal opacity() const;
         bool isEnabled() const;
         bool isVisible() const;
-        QString getHeaderContainer() const;
-        QString getFooterContainer() const;
-        QString getRightContainer() const;
-        QString getLeftContainer() const;
+        QObject *getHeaderContainer();
+        QObject *getFooterContainer();
+        QObject *getRightContainer();
+        QObject *getLeftContainer();
+        QObject *getCenterContainer();
 
     signals:
         void xChanged();
@@ -88,6 +99,7 @@ namespace hmi
         void footerContainerChanged();
         void leftContainerChanged();
         void rightContainerChanged();
+        void centerContainerChanged();
     };
 
     class ApplicationView : public QObject
@@ -95,6 +107,10 @@ namespace hmi
         Q_OBJECT
         Q_PROPERTY(ScreenState *screenState READ getScreenState NOTIFY screenStateChanged)
 
+        std::deque<int> m_viewQueue;
+        std::unordered_map<int, QObject *> m_viewObjects;
+        ViewState m_viewState;
+        int m_currentViewId;
         std::shared_ptr<ScreenState> m_screenState;
         ApplicationEngine *m_appEngine;
 
@@ -104,14 +120,27 @@ namespace hmi
                                  bool enable = true, bool visible = true);
         ~ApplicationView();
 
+        int setHeaderContainer(int id);
+        int setFooterContainer(int id);
+        int setRightContainer(int id);
+        int setLeftContainer(int id);
+        int setCenterContainer(int id);
+
         ScreenState *getScreenState();
         QObject *getViewObject(int id);
 
-        void show();
-        void hide();
+        int requestSwitchView(int id);
+        int requestSetViewState(ViewState state);
+        int requestShow();
+        int requestHide();
+
+        int currentViewId() const;
 
     signals:
         void screenStateChanged();
+        void componentLoaded();
+        void viewStateChanged();
+        void switchViewChanged(int oState, int nState);
     };
 } // namespace hmi
 
