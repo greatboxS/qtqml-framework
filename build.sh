@@ -93,7 +93,7 @@ echo "- CLEAR_CMAKE_CACHE     :  $CLEAR_CMAKE_CACHE"
 echo "---------------------------------------------------------------"
 echo ""
 
-[ "$BUILD_CLEAN" = "YES" ] && (rm -rf $BUILD_DIR)
+[ "$BUILD_CLEAN" = "YES" ] && (rm -rf $BUILD_DIR) && (rm -rf ${INSTALL_PREFIX})
 
 CMAKE_BUILD_OPTION="-DCMAKE_PREFIX_PATH=${QT_PATH}
                     -DCMAKE_BUILD_TYPE=${BUILD_TYPE}

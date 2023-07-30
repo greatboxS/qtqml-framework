@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(qtqml-framework VERSION ${BUILD_VERSION})
+project(qtqml_framework VERSION ${BUILD_VERSION})
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -32,14 +32,39 @@ file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE
      ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.c
 )
 
+# Qml file
+list(APPEND QML_FILES qml/LoaderContainer.qml qml/LoaderScreen.qml)
+
+# Use to set the singleton in qmldir file
+# set_source_files_properties(${QML_FILES} PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
 find_package(
     Qt6
     COMPONENTS Core Gui Qml Quick AppManLauncherPrivate DBus
     REQUIRED
 )
 
+if(NOT BUILD_SHARED_LIBS)
+    qt6_add_library(${PROJECT_NAME} STATIC)
+endif()
+
 # Need to add inc files to generate the moc files
-add_library(${PROJECT_NAME} ${INC_FILES} ${SRC_FILES})
+qt6_add_qml_module(
+    ${PROJECT_NAME}
+    URI
+    "QtQml.HMI"
+    VERSION
+    ${PROJECT_VERSION}
+    RESOURCE_PREFIX
+    "modules/qml"
+    QML_FILES
+    ${QML_FILES}
+    SOURCES
+    ${INC_FILES}
+    ${SRC_FILES}
+    # OUTPUT_DIRECTORY
+    # ${CMAKE_INSTALL_PREFIX}/modules
+)
 
 target_include_directories(
     ${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/ ${CMAKE_CURRENT_SOURCE_DIR}/src/*/
