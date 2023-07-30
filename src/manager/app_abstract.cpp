@@ -20,6 +20,8 @@ namespace hmi
         m_appEngine = new ApplicationEngine(this);
         m_appView = new ApplicationView(m_appEngine, 0.0, 0.0, 0.0, m_width, m_height, 1.0, true, true);
 
+        /* Add resource prefix path*/
+        m_appEngine->engine()->addImportPath(":/modules/qml");
         qmlRegisterSingletonInstance(HMI_APP_VIEW_MODULE, HMI_APP_VIEW_VER_MAJOR, HMI_APP_VIEW_VER_MINOR, HMI_APP_VIEW_OBJ, m_appView);
 
         onViewRegister(m_appView);

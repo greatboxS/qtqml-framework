@@ -15,19 +15,17 @@ int main(int argc, char *argv[]) {
         hmi::ApplicationView *appView;
 
         QGuiApplication *app = hmiApp->create(argc, argv);
-        QQmlApplicationEngine engine;
-
-        engine.addImportPath(":/modules/qml");
+        QQmlApplicationEngine *engine = static_cast<QQmlApplicationEngine *>(hmiApp->appEnngine()->engine());
 
         const QUrl url(APP_MAIN_UI_PATH);
         QObject::connect(
-            &engine, &QQmlApplicationEngine::objectCreated,
+            engine, &QQmlApplicationEngine::objectCreated,
             app, [url](QObject *obj, const QUrl &objUrl) {
                 if (!obj && url == objUrl)
                     QCoreApplication::exit(-1);
             },
             Qt::QueuedConnection);
-        engine.load(url);
+        engine->load(url);
         return app->exec();
 
     } catch (const std::exception &e) {
