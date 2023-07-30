@@ -1,4 +1,5 @@
 import QtQuick
+import QtQml.HMI 1.0
 
 Window {
     id: root
@@ -14,5 +15,13 @@ Window {
 
     Component.onCompleted: {
         console.log("On Demo app completed")
+    }
+
+    LoaderScreen {
+        id: screen
+    }
+
+    LoaderContainer {
+        id: container
     }
 }

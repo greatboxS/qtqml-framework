@@ -5,8 +5,8 @@ namespace hmi
     class DemoApp : public AbstractApplication
     {
     public:
-        DemoApp(QGuiApplication *app) :
-            AbstractApplication(app) {}
+        DemoApp() :
+            AbstractApplication(1280, 720) {}
         virtual ~DemoApp() {}
 
         virtual int onInitialize() {

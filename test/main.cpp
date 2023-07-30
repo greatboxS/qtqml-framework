@@ -11,22 +11,24 @@
 int main(int argc, char *argv[]) {
 
     try {
-        QGuiApplication app(argc, argv);
-
-        hmi::AbstractApplication *hmiApp = new hmi::DemoApp(&app);
+        hmi::AbstractApplication *hmiApp = new hmi::DemoApp();
         hmi::ApplicationView *appView;
 
+        QGuiApplication *app = hmiApp->create(argc, argv);
         QQmlApplicationEngine engine;
+
+        engine.addImportPath(":/modules/qml");
+
         const QUrl url(APP_MAIN_UI_PATH);
         QObject::connect(
             &engine, &QQmlApplicationEngine::objectCreated,
-            &app, [url](QObject *obj, const QUrl &objUrl) {
+            app, [url](QObject *obj, const QUrl &objUrl) {
                 if (!obj && url == objUrl)
                     QCoreApplication::exit(-1);
             },
             Qt::QueuedConnection);
         engine.load(url);
-        return app.exec();
+        return app->exec();
 
     } catch (const std::exception &e) {
         qCritical() << "ERROR:" << e.what();
